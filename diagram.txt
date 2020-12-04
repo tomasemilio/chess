@@ -1,0 +1,37 @@
+
+
+Board
+	Squares (dict)
+
+
+
+Square
+	Piece
+
+
+
+
+
+Piece
+
+
+
+
+
+Pawn(Piece) etc....
+
+
+
+
+STEPS
+
+1. stepup board
+	OK
+
+2. MOVE piece
+	check turn
+	iterate through sqaures and check turn and if there's a piece. (single method for square)
+		square file and rank
+		pawn to move + 1 rank
+
+		what piece, ex pawn. 
