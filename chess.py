@@ -14,9 +14,9 @@ class Board:
 
 	def setup(self):
 		# # PAWNS
-		# for i in list('abcdefgh'):
-		# 	self.set_piece(f'{i}2', Pawn, 1)
-		# 	self.set_piece(f'{i}7', Pawn, -1)
+		for i in list('abcdefgh'):
+			self.set_piece(f'{i}2', Pawn, 1)
+			self.set_piece(f'{i}7', Pawn, -1)
 
 		# ROOKS
 		self.set_piece('a1', Rook, 1)
@@ -30,11 +30,11 @@ class Board:
 		self.set_piece('c8', Bishop, -1)
 		self.set_piece('f8', Bishop, -1)
 
-		# # KNIGHTS
-		# self.set_piece('b1', Knight, 1)
-		# self.set_piece('g1', Knight, 1)
-		# self.set_piece('b8', Knight, -1)
-		# self.set_piece('g8', Knight, -1)
+		# KNIGHTS
+		self.set_piece('b1', Knight, 1)
+		self.set_piece('g1', Knight, 1)
+		self.set_piece('b8', Knight, -1)
+		self.set_piece('g8', Knight, -1)
 
 		# QUEENS
 		self.set_piece('d1', Queen, 1)
@@ -50,23 +50,33 @@ class Board:
 
 	def piece_legal_move(self, coord):
 		square = getattr(self, f"{coord}")
-		if square.piece:
-			return square.piece.legal_squares(self)
+		if square.piece and square.piece.color == self.turn:
+			return [f"{square.piece.letter}{sq.coord}" for sq in square.piece.legal_squares()]
 
-	def move(self, old_square_coord, new_square_coord):
-		if hasattr(self, old_square_coord) and hasattr(self, new_square_coord):
-			old_square = getattr(self, new_square_coord)	
-			new_square = getattr(self, new_square_coord)	
+	def all_legal_moves(self):
+		all_legal_moves = []
+		for rank in self.RANKS:
+			for file in self.FILES_MAPPING.values():
+				piece_legal_moves = self.piece_legal_move(f"{file}{rank}")
+				print(piece_legal_moves) 
+				all_legal_moves = all_legal_moves +  piece_legal_moves
 
-			if hasattr(self, old_square_coord).piece:
-				piece = getattr(self, old_square_coord).piece
-				legal_squares = piece.legal_squares(self)
 
-				old_square.piece = None
-				new_square.piece = piece
-				piece.square = new_square
 
-		print(self)
+	# def move(self, old_square_coord, new_square_coord):
+	# 	if hasattr(self, old_square_coord) and hasattr(self, new_square_coord):
+	# 		old_square = getattr(self, new_square_coord)	
+	# 		new_square = getattr(self, new_square_coord)	
+
+	# 		if hasattr(self, old_square_coord).piece:
+	# 			piece = getattr(self, old_square_coord).piece
+	# 			legal_squares = piece.legal_squares(self)
+
+	# 			old_square.piece = None
+	# 			new_square.piece = piece
+	# 			piece.square = new_square
+
+	# 	print(self)
 
 
 	def __repr__(self):
@@ -165,6 +175,8 @@ class Square:
 		self.file = file
 		self.rank = rank
 		self.FILES_MAPPING = dict(zip(list(range(1, 9)), list('abcdefgh')))
+		self.file_letter = self.FILES_MAPPING[self.file]
+		self.coord = f"{self.file_letter}{self.rank}"
 		self.piece = None
 
 	def __repr__(self):
@@ -177,8 +189,8 @@ class Square:
 
 board = Board()
 print(board)
-# print(board.a1.piece)
-# print(board.a1.piece.legal_squares())
+print(board.turn)
+print(board.all_legal_moves())
 
 
 

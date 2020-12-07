@@ -107,59 +107,101 @@ class King(Piece):
 		return '♔' if self.color == 1 else '♚'
 
 
-# class Pawn(Piece):
-# 	value = 1
-# 	letter = None
-
-# 	def __repr__(self):
-# 		return '♙' if self.color == 1 else '♟︎'
-
-# 	def legal_squares(self):
-# 		legal_squares = []
-
-# 		# Move forward
-# 		new_square_coord = f'_{self.square.file}{self.square.rank + self.color}'
-# 		if hasattr(self.board, new_square_coord):
-# 			new_square = getattr(self.board, new_square_coord)
-# 			if new_square.piece is None:
-# 				legal_squares.append(new_square)
-
-# 		# Move forward 2
-# 		if (self.square.rank == 2 and self.color == 1) or ((self.square.rank == 7 and self.color == -1)):
-# 			new_square_coord = f'_{self.square.file}{self.square.rank + self.color * 2}'
-# 			new_square = getattr(self.board, new_square_coord)
-# 			if new_square.piece is None:
-# 				legal_squares.append(new_square)
-
-# 		# Eat
-# 		for side in [1, -1]:
-# 			new_square_coord = f'_{self.square.file + side}{self.square.rank + self.color}'
-# 			if hasattr(self.board, new_square_coord):
-# 				new_square = getattr(self.board, new_square_coord)
-# 				if new_square.piece and new_square.piece.color != self.color:
-# 					legal_squares.append(new_square)
-
-# 		# Missing
-# 		# EN PASSANT
-# 		# PROMOTION
-
-# 		return legal_squares
-
-
-
-
-
-
-
-
-
-
 class Knight(Piece):
 	value = 3
 	letter = 'N'
 
 	def __repr__(self):
 		return '♘' if self.color == 1 else '♞'
+
+
+	def legal_squares(self):
+		legal_squares = []
+		steps = [1, -1, 2, -2]
+		for direction in steps:
+			for direction2 in steps:
+				if abs(direction) == abs(direction2):
+					continue
+				else:
+					new_rank = self.square.rank + direction
+					try:
+						new_file = self.board.FILES_MAPPING[self.square.file + direction2]
+					except:
+						continue
+					new_square_coord = f"{new_file}{new_rank}"
+					if hasattr(self.board, new_square_coord):
+						new_square = getattr(self.board, new_square_coord)
+						if new_square.piece is None or new_square.piece.color != self.color:
+							legal_squares.append(new_square)
+						else:
+							continue
+		return legal_squares
+
+
+
+
+class Pawn(Piece):
+	value = 1
+	letter = None
+
+	def __repr__(self):
+		return '♙' if self.color == 1 else '♟︎'
+
+	def legal_squares(self):
+		legal_squares = []
+
+		# Move forward
+		new_rank = self.square.rank + self.color
+		try:
+			new_file = self.board.FILES_MAPPING[self.square.file]
+			new_square_coord = f'{new_file}{new_rank}'
+			if hasattr(self.board, new_square_coord):
+				new_square = getattr(self.board, new_square_coord)
+				if new_square.piece is None:
+					legal_squares.append(new_square)
+		except:
+			pass
+
+		# Move forward 2
+		if (self.square.rank == 2 and self.color == 1) or ((self.square.rank == 7 and self.color == -1)):
+			new_rank = self.square.rank + self.color * 2
+			try:
+				new_file = self.board.FILES_MAPPING[self.square.file]
+				new_square_coord = f'{new_file}{new_rank}'
+				new_square = getattr(self.board, new_square_coord)
+				if new_square.piece is None:
+					legal_squares.append(new_square)
+			except:
+				pass
+
+		# Eat
+		for side in [1, -1]:
+			new_rank = self.square.rank + self.color
+			try:
+				new_file = self.board.FILES_MAPPING[self.square.file + side]
+				new_square_coord = f'{new_file}{new_rank}'
+				if hasattr(self.board, new_square_coord):
+					new_square = getattr(self.board, new_square_coord)
+					if new_square.piece and new_square.piece.color != self.color:
+						legal_squares.append(new_square)
+			except:
+				pass
+
+		# Missing
+		# EN PASSANT
+		# PROMOTION
+
+		return legal_squares
+
+
+
+
+
+
+
+
+
+
 
 
 
