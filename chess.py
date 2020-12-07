@@ -5,89 +5,170 @@ class Board:
 	def __init__(self):
 		self.RANKS = list(range(1, 9))
 		self.FILES = list(range(1, 9))
-		FILES_MAPPING = dict(zip(self.FILES, list('abcdefgh')))
+		self.FILES_MAPPING = dict(zip(self.FILES, list('abcdefgh')))
 		for rank in self.RANKS:
 			for file in self.FILES:
-				setattr(self, f"_{file}{rank}", Square(file, rank))
+				setattr(self, f"{self.FILES_MAPPING[file]}{rank}", Square(file, rank))
 		self.setup()
 		self.turn = 1
 
 	def setup(self):
-		# PAWNS
-		for i in self.FILES:
-			self.set_piece(f'{i}2', Pawn, 1)
-			self.set_piece(f'{i}7', Pawn, -1)
+		# # PAWNS
+		# for i in list('abcdefgh'):
+		# 	self.set_piece(f'{i}2', Pawn, 1)
+		# 	self.set_piece(f'{i}7', Pawn, -1)
 
-		# # ROOKS
-		# self.set_piece('a1', Rook(1))
-		# self.set_piece('h1', Rook(1))
-		# self.set_piece('a8', Rook(-1))
-		# self.set_piece('h8', Rook(-1))
+		# ROOKS
+		self.set_piece('a1', Rook, 1)
+		self.set_piece('h1', Rook, 1)
+		self.set_piece('a8', Rook, -1)
+		self.set_piece('h8', Rook, -1)
 
-		# # BISHOPS
-		# self.set_piece('c1', Bishop(1))
-		# self.set_piece('f1', Bishop(1))
-		# self.set_piece('c8', Bishop(-1))
-		# self.set_piece('f8', Bishop(-1))
+		# BISHOPS
+		self.set_piece('c1', Bishop, 1)
+		self.set_piece('f1', Bishop, 1)
+		self.set_piece('c8', Bishop, -1)
+		self.set_piece('f8', Bishop, -1)
 
 		# # KNIGHTS
-		# self.set_piece('b1', Knight(1))
-		# self.set_piece('g1', Knight(1))
-		# self.set_piece('b8', Knight(-1))
-		# self.set_piece('g8', Knight(-1))
+		# self.set_piece('b1', Knight, 1)
+		# self.set_piece('g1', Knight, 1)
+		# self.set_piece('b8', Knight, -1)
+		# self.set_piece('g8', Knight, -1)
 
-		# # QUEENS
-		# self.set_piece('d1', King(1))
-		# self.set_piece('d8', King(-1))
+		# QUEENS
+		self.set_piece('d1', Queen, 1)
+		self.set_piece('d8', Queen, -1)
 
-		# # KINGS
-		# self.set_piece('e1', King(1))
-		# self.set_piece('e8', King(-1))
+		# KINGS
+		self.set_piece('e1', King, 1)
+		self.set_piece('e8', King, -1)
 
 	def set_piece(self, coord, piece, color):
-		square = getattr(self, f"_{coord}")
-		square.piece = piece(square, color)
+		piece = piece(self, coord, color)
+		piece.square.piece = piece
 
 	def piece_legal_move(self, coord):
-		square = getattr(self, f"_{coord}")
+		square = getattr(self, f"{coord}")
 		if square.piece:
-			return square.piece.legal_moves(self)
+			return square.piece.legal_squares(self)
 
-	# def __repr__(self):
-	# 	return f'''
-	# 	{self.SQUARES['a8']} {self.SQUARES['b8']} {self.SQUARES['c8']} {self.SQUARES['d8']} {self.SQUARES['e8']} {self.SQUARES['f8']} {self.SQUARES['g8']} {self.SQUARES['h8']}
-	# 	{self.SQUARES['a7']} {self.SQUARES['b7']} {self.SQUARES['c7']} {self.SQUARES['d7']} {self.SQUARES['e7']} {self.SQUARES['f7']} {self.SQUARES['g7']} {self.SQUARES['h7']}
-	# 	{self.SQUARES['a6']} {self.SQUARES['b6']} {self.SQUARES['c6']} {self.SQUARES['d6']} {self.SQUARES['e6']} {self.SQUARES['f6']} {self.SQUARES['g6']} {self.SQUARES['h6']}
-	# 	{self.SQUARES['a5']} {self.SQUARES['b5']} {self.SQUARES['c5']} {self.SQUARES['d5']} {self.SQUARES['e5']} {self.SQUARES['f5']} {self.SQUARES['g5']} {self.SQUARES['h5']}
-	# 	{self.SQUARES['a4']} {self.SQUARES['b4']} {self.SQUARES['c4']} {self.SQUARES['d4']} {self.SQUARES['e4']} {self.SQUARES['f4']} {self.SQUARES['g4']} {self.SQUARES['h4']}
-	# 	{self.SQUARES['a3']} {self.SQUARES['b3']} {self.SQUARES['c3']} {self.SQUARES['d3']} {self.SQUARES['e3']} {self.SQUARES['f3']} {self.SQUARES['g3']} {self.SQUARES['h3']}
-	# 	{self.SQUARES['a2']} {self.SQUARES['b2']} {self.SQUARES['c2']} {self.SQUARES['d2']} {self.SQUARES['e2']} {self.SQUARES['f2']} {self.SQUARES['g2']} {self.SQUARES['h2']}
-	# 	{self.SQUARES['a1']} {self.SQUARES['b1']} {self.SQUARES['c1']} {self.SQUARES['d1']} {self.SQUARES['e1']} {self.SQUARES['f1']} {self.SQUARES['g1']} {self.SQUARES['h1']}
-	# 	'''
+	def move(self, old_square_coord, new_square_coord):
+		if hasattr(self, old_square_coord) and hasattr(self, new_square_coord):
+			old_square = getattr(self, new_square_coord)	
+			new_square = getattr(self, new_square_coord)	
 
-	# def move(self, init_square, end_square):
-	# 	if self.SQUARES[init_square].piece and \
-	# 	self.SQUARES[init_square].piece.color == self.turn:
-	# 		self.SQUARES[end_square].piece = self.SQUARES[init_square].piece
-	# 		self.SQUARES[init_square].piece = None
-	# 		self.turn *= -1
-	# 	else:
-	# 		print('Illegal move!')
-	# 	print(self)
+			if hasattr(self, old_square_coord).piece:
+				piece = getattr(self, old_square_coord).piece
+				legal_squares = piece.legal_squares(self)
 
-	# def list_square_legal_moves(self, square):
-	# 	if isinstance(square.piece, Pawn): 
+				old_square.piece = None
+				new_square.piece = piece
+				piece.square = new_square
+
+		print(self)
+
+
+	def __repr__(self):
+		PIECE_COLOR = ''
+		LIGHT_SQUARE = '107;30m'
+		DARK_SQUARE = '44;30m'
+		VALID_SQUARE = ''
+
+		return """
+	{0}{1}{2}{3}{4}{5}{6}{7}
+	{8}{9}{10}{11}{12}{13}{14}{15}
+	{16}{17}{18}{19}{20}{21}{22}{23}
+	{24}{25}{26}{27}{28}{29}{30}{31}
+	{32}{33}{34}{35}{36}{37}{38}{39}
+	{40}{41}{42}{43}{44}{45}{46}{47}
+	{48}{49}{50}{51}{52}{53}{54}{55}
+	{56}{57}{58}{59}{60}{61}{62}{63}
+		""".format(
+			('\033[' + LIGHT_SQUARE + ' ' + str(self.a8) + ' \033[0m'),
+			('\033[' + DARK_SQUARE + ' ' + str(self.b8) + ' \033[0m'),
+			('\033[' + LIGHT_SQUARE + ' ' + str(self.c8) + ' \033[0m'),
+			('\033[' + DARK_SQUARE + ' ' + str(self.d8) + ' \033[0m'),
+			('\033[' + LIGHT_SQUARE + ' ' + str(self.e8) + ' \033[0m'),
+			('\033[' + DARK_SQUARE + ' ' + str(self.f8) + ' \033[0m'),
+			('\033[' + LIGHT_SQUARE + ' ' + str(self.g8) + ' \033[0m'),
+			('\033[' + DARK_SQUARE + ' ' + str(self.h8) + ' \033[0m'),
+
+			('\033[' + DARK_SQUARE + ' ' + str(self.a7) + ' \033[0m'),
+			('\033[' + LIGHT_SQUARE + ' ' + str(self.b7) + ' \033[0m'),
+			('\033[' + DARK_SQUARE + ' ' + str(self.c7) + ' \033[0m'),
+			('\033[' + LIGHT_SQUARE + ' ' + str(self.d7) + ' \033[0m'),
+			('\033[' + DARK_SQUARE + ' ' + str(self.e7) + ' \033[0m'),
+			('\033[' + LIGHT_SQUARE + ' ' + str(self.f7) + ' \033[0m'),
+			('\033[' + DARK_SQUARE + ' ' + str(self.g7) + ' \033[0m'),
+			('\033[' + LIGHT_SQUARE + ' ' + str(self.h7) + ' \033[0m'),
+
+			('\033[' + LIGHT_SQUARE + ' ' + str(self.a6) + ' \033[0m'),
+			('\033[' + DARK_SQUARE + ' ' + str(self.b6) + ' \033[0m'),
+			('\033[' + LIGHT_SQUARE + ' ' + str(self.c6) + ' \033[0m'),
+			('\033[' + DARK_SQUARE + ' ' + str(self.d6) + ' \033[0m'),
+			('\033[' + LIGHT_SQUARE + ' ' + str(self.e6) + ' \033[0m'),
+			('\033[' + DARK_SQUARE + ' ' + str(self.f6) + ' \033[0m'),
+			('\033[' + LIGHT_SQUARE + ' ' + str(self.g6) + ' \033[0m'),
+			('\033[' + DARK_SQUARE + ' ' + str(self.h6) + ' \033[0m'),
+
+			('\033[' + DARK_SQUARE + ' ' + str(self.a5) + ' \033[0m'),
+			('\033[' + LIGHT_SQUARE + ' ' + str(self.b5) + ' \033[0m'),
+			('\033[' + DARK_SQUARE + ' ' + str(self.c5) + ' \033[0m'),
+			('\033[' + LIGHT_SQUARE + ' ' + str(self.d5) + ' \033[0m'),
+			('\033[' + DARK_SQUARE + ' ' + str(self.e5) + ' \033[0m'),
+			('\033[' + LIGHT_SQUARE + ' ' + str(self.f5) + ' \033[0m'),
+			('\033[' + DARK_SQUARE + ' ' + str(self.g5) + ' \033[0m'),
+			('\033[' + LIGHT_SQUARE + ' ' + str(self.h5) + ' \033[0m'),
+
+			('\033[' + LIGHT_SQUARE + ' ' + str(self.a4) + ' \033[0m'),
+			('\033[' + DARK_SQUARE + ' ' + str(self.b4) + ' \033[0m'),
+			('\033[' + LIGHT_SQUARE + ' ' + str(self.c4) + ' \033[0m'),
+			('\033[' + DARK_SQUARE + ' ' + str(self.d4) + ' \033[0m'),
+			('\033[' + LIGHT_SQUARE + ' ' + str(self.e4) + ' \033[0m'),
+			('\033[' + DARK_SQUARE + ' ' + str(self.f4) + ' \033[0m'),
+			('\033[' + LIGHT_SQUARE + ' ' + str(self.g4) + ' \033[0m'),
+			('\033[' + DARK_SQUARE + ' ' + str(self.h4) + ' \033[0m'),
+
+			('\033[' + DARK_SQUARE + ' ' + str(self.a3) + ' \033[0m'),
+			('\033[' + LIGHT_SQUARE + ' ' + str(self.b3) + ' \033[0m'),
+			('\033[' + DARK_SQUARE + ' ' + str(self.c3) + ' \033[0m'),
+			('\033[' + LIGHT_SQUARE + ' ' + str(self.d3) + ' \033[0m'),
+			('\033[' + DARK_SQUARE + ' ' + str(self.e3) + ' \033[0m'),
+			('\033[' + LIGHT_SQUARE + ' ' + str(self.f3) + ' \033[0m'),
+			('\033[' + DARK_SQUARE + ' ' + str(self.g3) + ' \033[0m'),
+			('\033[' + LIGHT_SQUARE + ' ' + str(self.h3) + ' \033[0m'),
+
+			('\033[' + LIGHT_SQUARE + ' ' + str(self.a2) + ' \033[0m'),
+			('\033[' + DARK_SQUARE + ' ' + str(self.b2) + ' \033[0m'),
+			('\033[' + LIGHT_SQUARE + ' ' + str(self.c2) + ' \033[0m'),
+			('\033[' + DARK_SQUARE + ' ' + str(self.d2) + ' \033[0m'),
+			('\033[' + LIGHT_SQUARE + ' ' + str(self.e2) + ' \033[0m'),
+			('\033[' + DARK_SQUARE + ' ' + str(self.f2) + ' \033[0m'),
+			('\033[' + LIGHT_SQUARE + ' ' + str(self.g2) + ' \033[0m'),
+			('\033[' + DARK_SQUARE + ' ' + str(self.h2) + ' \033[0m'),
+
+			('\033[' + DARK_SQUARE + ' ' + str(self.a1) + ' \033[0m'),
+			('\033[' + LIGHT_SQUARE + ' ' + str(self.b1) + ' \033[0m'),
+			('\033[' + DARK_SQUARE + ' ' + str(self.c1) + ' \033[0m'),
+			('\033[' + LIGHT_SQUARE + ' ' + str(self.d1) + ' \033[0m'),
+			('\033[' + DARK_SQUARE + ' ' + str(self.e1) + ' \033[0m'),
+			('\033[' + LIGHT_SQUARE + ' ' + str(self.f1) + ' \033[0m'),
+			('\033[' + DARK_SQUARE + ' ' + str(self.g1) + ' \033[0m'),
+			('\033[' + LIGHT_SQUARE + ' ' + str(self.h1) + ' \033[0m'),
+		)
 
 
 
 class Square:
-	def __init__(self, file_int, rank_int):
-		self.file = file_int
-		self.rank = rank_int
+	def __init__(self, file, rank):
+		self.file = file
+		self.rank = rank
+		self.FILES_MAPPING = dict(zip(list(range(1, 9)), list('abcdefgh')))
 		self.piece = None
 
 	def __repr__(self):
-		return f"{self.file}{self.rank}"
+		return f"{self.FILES_MAPPING[self.file]}{self.rank}"
 
 	def __str__(self):
 		if self.piece is None:
@@ -96,6 +177,8 @@ class Square:
 
 board = Board()
 print(board)
+# print(board.a1.piece)
+# print(board.a1.piece.legal_squares())
 
 
 
