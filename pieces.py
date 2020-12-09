@@ -2,8 +2,7 @@ class Piece:
 	def __init__(self, board, coord, color):
 		self.board = board
 		self.color = color
-		self.square = getattr(board, coord)
-
+		self.square = board(coord)
 
 	def legal_squares(self):
 		legal_squares = []
@@ -11,63 +10,54 @@ class Piece:
 
 		if self.letter in ['Q', 'K', 'R']:
 			# going up/down on rank
-			for direction in steps:
-				for step in range(1, 8):
+			for direction in [1, -1]:
+				for step in steps:
 					new_rank = self.square.rank + step * direction
-					new_file = self.board.FILES_MAPPING[self.square.file]
+					new_file = self.square.file_letter
 					new_square_coord = f"{new_file}{new_rank}"
-					if hasattr(self.board, new_square_coord):
-						new_square = getattr(self.board, new_square_coord)
+					new_square = self.board(new_square_coord)
+					if new_square:
 						if new_square.piece is None:
 							legal_squares.append(new_square)
-						elif new_square.piece.color != self.color:
-							legal_squares.append(new_square)
-							break
 						else:
+							if new_square.piece.color != self.color: 
+								legal_squares.append(new_square)
 							break
 					else:
 						break
 
 			# Going left/right file
-			for direction in steps:
-				for step in range(1, 8):
+			for direction in [1 , -1]:
+				for step in steps:
 					new_rank = self.square.rank
-					try:
-						new_file = self.board.FILES_MAPPING[self.square.file + step * direction]
-					except:
-						break
+					new_file = self.board.FILES_MAPPING.get(self.square.file + step * direction)
 					new_square_coord = f"{new_file}{new_rank}"
-					if hasattr(self.board, new_square_coord):
-						new_square = getattr(self.board, new_square_coord)
+					new_square = self.board(new_square_coord)
+					if new_square:
 						if new_square.piece is None:
 							legal_squares.append(new_square)
-						elif new_square.piece.color != self.color:
-							legal_squares.append(new_square)
-							break
 						else:
+							if new.piece.color != self.color:
+								legal_squares.append(new_square)
 							break
 					else:
 						break
 		
 		if self.letter in ['Q', 'K' 'B']:
 			# diagonals
-			for direction in steps:
+			for direction in [-1, 1]:
 				for direction2 in [1, -1]:
-					for step in range(1, 8):
+					for step in steps:
 						new_rank = self.square.rank + step * direction
-						try:
-							new_file = self.board.FILES_MAPPING[self.square.file + step * direction2]
-						except:
-							break
+						new_file = self.board.FILES_MAPPING.get(self.square.file + step * direction2)
 						new_square_coord = f"{new_file}{new_rank}"
-						if hasattr(self.board, new_square_coord):
-							new_square = getattr(self.board, new_square_coord)
+						new_square = self.board(new_square_coord)
+						if new_square:
 							if new_square.piece is None:
 								legal_squares.append(new_square)
-							elif new_square.piece.color != self.color:
-								legal_squares.append(new_square)
-								break
 							else:
+								if new_square.piece.color != self.color:
+									legal_squares.append(new_square)
 								break
 						else:
 							break
