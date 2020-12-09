@@ -114,17 +114,12 @@ class Knight(Piece):
 					continue
 				else:
 					new_rank = self.square.rank + direction
-					try:
-						new_file = self.board.FILES_MAPPING[self.square.file + direction2]
-					except:
-						continue
+					new_file = self.board.FILES_MAPPING.get(self.square.file + direction2)
 					new_square_coord = f"{new_file}{new_rank}"
-					if hasattr(self.board, new_square_coord):
-						new_square = getattr(self.board, new_square_coord)
-						if new_square.piece is None or new_square.piece.color != self.color:
-							legal_squares.append(new_square)
-						else:
-							continue
+					new_square = self.board(new_square_coord)
+					if new_square and (new_square.piece is None or new_square.piece.color != self.color):
+						legal_squares.append(new_square)
+
 		return legal_squares
 
 
@@ -142,40 +137,29 @@ class Pawn(Piece):
 
 		# Move forward
 		new_rank = self.square.rank + self.color
-		try:
-			new_file = self.board.FILES_MAPPING[self.square.file]
-			new_square_coord = f'{new_file}{new_rank}'
-			if hasattr(self.board, new_square_coord):
-				new_square = getattr(self.board, new_square_coord)
-				if new_square.piece is None:
-					legal_squares.append(new_square)
-		except:
-			pass
+		new_file = self.board.FILES_MAPPING.get(self.square.file)
+		new_square_coord = f'{new_file}{new_rank}'
+		new_square = self.board(new_square_coord)
+		if new_square and new_square.piece is None:
+			legal_squares.append(new_square)
 
 		# Move forward 2
 		if (self.square.rank == 2 and self.color == 1) or ((self.square.rank == 7 and self.color == -1)):
 			new_rank = self.square.rank + self.color * 2
-			try:
-				new_file = self.board.FILES_MAPPING[self.square.file]
-				new_square_coord = f'{new_file}{new_rank}'
-				new_square = getattr(self.board, new_square_coord)
-				if new_square.piece is None:
-					legal_squares.append(new_square)
-			except:
-				pass
+			new_file = self.board.FILES_MAPPING.get(self.square.file)
+			new_square_coord = f'{new_file}{new_rank}'
+			new_square = self.board(new_square_coord)
+			if new_square and new_square.piece is None:
+				legal_squares.append(new_square)
 
 		# Eat
 		for side in [1, -1]:
 			new_rank = self.square.rank + self.color
-			try:
-				new_file = self.board.FILES_MAPPING[self.square.file + side]
-				new_square_coord = f'{new_file}{new_rank}'
-				if hasattr(self.board, new_square_coord):
-					new_square = getattr(self.board, new_square_coord)
-					if new_square.piece and new_square.piece.color != self.color:
-						legal_squares.append(new_square)
-			except:
-				pass
+			new_file = self.board.FILES_MAPPING.get(self.square.file + side)
+			new_square_coord = f'{new_file}{new_rank}'
+			new_square = self.board(new_square_coord)
+			if new_square and new_square.piece and new_square.piece.color != self.color:
+				legal_squares.append(new_square)			
 
 		# Missing
 		# EN PASSANT
