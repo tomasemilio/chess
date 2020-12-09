@@ -37,7 +37,7 @@ class Piece:
 						if new_square.piece is None:
 							legal_squares.append(new_square)
 						else:
-							if new.piece.color != self.color:
+							if new_square.piece.color != self.color:
 								legal_squares.append(new_square)
 							break
 					else:
