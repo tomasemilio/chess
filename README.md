@@ -48,7 +48,13 @@ b.all_legal_moves()
 	♙: [('e4', 'e5'), ('e4', 'd5')]
 }
 ```
+Evaluation after taking
+```python
 
+b.move('e4', 'd5')
+
+```
+![Takes](/docs/takes.png?raw=true "Takes")
 
 ## Things missing
 1. Promotion
