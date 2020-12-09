@@ -50,5 +50,10 @@ b.all_legal_moves()
 ```
 
 
-## Things so far
-1. hola
+## Things missing
+1. Promotion
+2. Check
+3. Checkmate
+4. En Passant
+5. Engine to evaluate position
+
