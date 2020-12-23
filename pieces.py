@@ -1,8 +1,28 @@
 class Piece:
-	def __init__(self, board, coord, color):
+	LETTERS = list('KQRBN ')
+
+	def __init__(self, board, color):
 		self.board = board
 		self.color = color
-		self.square = board(coord)
+		self.active = False
+		self._square = None
+
+	@property
+	def square(self):
+		return self._square
+
+	@square.setter
+	def square(self, new_square):
+		if self._square:
+			del	self._square.piece
+		self._square = new_square
+		self._square.piece = self
+		self.active = True
+
+	@square.deleter
+	def square(self):
+		self.active = False
+		self._square = None
 
 	def legal_squares(self):
 		legal_squares = []
@@ -18,9 +38,11 @@ class Piece:
 					new_square = self.board(new_square_coord)
 					if new_square:
 						if new_square.piece is None:
+							print(self.letter, self.color, new_square.__repr__(), 'empty')
 							legal_squares.append(new_square)
 						else:
 							if new_square.piece.color != self.color: 
+								print(self.letter, self.color, new_square.__repr__(), 'taking')
 								legal_squares.append(new_square)
 							break
 					else:
@@ -36,8 +58,10 @@ class Piece:
 					if new_square:
 						if new_square.piece is None:
 							legal_squares.append(new_square)
+							print(self.letter, self.color, new_square.__repr__(), 'empty')
 						else:
 							if new_square.piece.color != self.color:
+								print(self.letter, self.color, new_square.__repr__(), 'taking')
 								legal_squares.append(new_square)
 							break
 					else:
@@ -55,8 +79,10 @@ class Piece:
 						if new_square:
 							if new_square.piece is None:
 								legal_squares.append(new_square)
+								print(self.letter, self.color, new_square.__repr__(), 'empty')
 							else:
 								if new_square.piece.color != self.color:
+									print(self.letter, self.color, new_square.__repr__(), 'taking')
 									legal_squares.append(new_square)
 								break
 						else:
@@ -96,6 +122,15 @@ class King(Piece):
 	def __repr__(self):
 		return '♔' if self.color == 1 else '♚'
 
+	def is_checked(self):
+		attackers = []
+		opposite_pieces = [piece for piece in self.board.pieces if piece.color != self.color]
+		for opposite_piece in opposite_pieces:
+			if self.square in opposite_piece.legal_squares():
+				attackers.append(opposite_piece)
+
+		return attackers
+
 
 class Knight(Piece):
 	value = 3
@@ -121,8 +156,6 @@ class Knight(Piece):
 						legal_squares.append(new_square)
 
 		return legal_squares
-
-
 
 
 class Pawn(Piece):
@@ -167,6 +200,15 @@ class Pawn(Piece):
 
 		return legal_squares
 
+
+PIECE_MAPPING = {
+	' ': Pawn,
+	'K': King,
+	'Q': Queen,
+	'B': Bishop,
+	'R': Rook,
+	'N': Knight
+}
 
 
 
