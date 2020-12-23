@@ -16,6 +16,7 @@ class Piece:
 		if self._square:
 			del	self._square.piece
 		self._square = new_square
+		# This line is very important.
 		self._square.piece = self
 		self.active = True
 
@@ -38,11 +39,9 @@ class Piece:
 					new_square = self.board(new_square_coord)
 					if new_square:
 						if new_square.piece is None:
-							print(self.letter, self.color, new_square.__repr__(), 'empty')
 							legal_squares.append(new_square)
 						else:
 							if new_square.piece.color != self.color: 
-								print(self.letter, self.color, new_square.__repr__(), 'taking')
 								legal_squares.append(new_square)
 							break
 					else:
@@ -58,16 +57,14 @@ class Piece:
 					if new_square:
 						if new_square.piece is None:
 							legal_squares.append(new_square)
-							print(self.letter, self.color, new_square.__repr__(), 'empty')
 						else:
 							if new_square.piece.color != self.color:
-								print(self.letter, self.color, new_square.__repr__(), 'taking')
 								legal_squares.append(new_square)
 							break
 					else:
 						break
 		
-		if self.letter in ['Q', 'K' 'B']:
+		if self.letter in ['Q', 'K', 'B']:
 			# diagonals
 			for direction in [-1, 1]:
 				for direction2 in [1, -1]:
@@ -79,10 +76,8 @@ class Piece:
 						if new_square:
 							if new_square.piece is None:
 								legal_squares.append(new_square)
-								print(self.letter, self.color, new_square.__repr__(), 'empty')
 							else:
 								if new_square.piece.color != self.color:
-									print(self.letter, self.color, new_square.__repr__(), 'taking')
 									legal_squares.append(new_square)
 								break
 						else:
