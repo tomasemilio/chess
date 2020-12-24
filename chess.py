@@ -13,11 +13,12 @@ class Board:
             1: [],
             -1: []
         }
+        self.moves = {}
+        self.n_move = 1
         self.setup_board()
         self.setup_pieces()
-        
 
-        # self.n = 1
+
         # self.turn_mapping = {
         #   1: {
         #       'side': 'WHITE',
@@ -44,6 +45,12 @@ class Board:
         '''
         if hasattr(self, coord):
             return getattr(self, coord)
+
+    def add_move(self, move):
+        if self.turn == 1:
+            self.moves[self.n_move] = {self.turn: move}
+        else:
+            self.moves[self.n_move][self.turn] = move
 
     @property
     def pieces(self):
@@ -90,7 +97,7 @@ class Board:
         King(self, 1).square = self.e1
         King(self, -11).square = self.e8
 
-    def move(self, move):
+    def move(self, original_move):
         # PENDING
         # Check whose turn it is. 
         # If checked: are there available moves to get out of check?
@@ -101,6 +108,7 @@ class Board:
             - Target Square
             - (optional) initial rank or file if two pieces can move to the same square.
         '''
+        move = original_move.replace('x', '')
         moving_piece_info, target_square = move[: -2], move[-2:]
         if moving_piece_info == '':
             moving_piece, init_rank_file = ' ', ''
@@ -136,9 +144,16 @@ class Board:
 
         '''
         3. Move
+            - Piece changes squares
+            - Turn changes
+            - Add move
         '''
         piece_to_move.square = self(target_square)
+        self.add_move(original_move)
+
         self.turn *= -1
+        if self.turn == 1:
+            self.n_move += 1
         print(repr(self))
 
     def __repr__(self, highlighted=None):
@@ -170,10 +185,12 @@ class Board:
         {48}{49}{50}{51}{52}{53}{54}{55}
         {56}{57}{58}{59}{60}{61}{62}{63}
         """.format(*tuple(squares_str))
+
         print(f'''
-            WHITE {self.score[1]}
-            BLACK {self.score[-1]}
-            SCORE {sum([i.value for i in self.score[1]]) - sum([i.value for i in self.score[-1]])}''')
+WHITE -  {' '.join([j.get(1) for i, j in self.moves.items() if j.get(1)])}
+BLACK -  {' '.join([j.get(-1) for i, j in self.moves.items() if j.get(-1)])}
+            ''')
+
         return board
     
 
@@ -183,3 +200,7 @@ if __name__ == '__main__':
     b.move('e5')
     b.move('Nf3')
     b.move('Nc6')
+    b.move('Bb5')
+    b.move('a6')
+    b.move('Bxc6')
+    # print(b.moves)
